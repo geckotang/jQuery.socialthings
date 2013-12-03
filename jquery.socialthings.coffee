@@ -143,6 +143,76 @@ do ($ = jQuery) ->
     return
 
   # ============================================================
+  # twitter custom button
+
+  ns.twitterShareButton = {}
+
+  class ns.twitterShareButton.Button
+
+    @defaults =
+      windowname: 'twitter-tweet-dialog'
+      width: null
+      height: null
+      url: null
+      html: null
+      tweakHref: true
+
+    constructor: (@$el, options) ->
+      @options = $.extend {}, ns.twitterShareButton.Button.defaults, options
+      @_tweakInsideHtml()
+      @_handleDataAttrs()
+      @_prepareUrl()
+      @_eventify()
+
+    open: ->
+      o = @options
+      name = o.windowname
+      args = [@_url, name]
+      if o.width? and o.height?
+        args.push "width=#{o.width},height=#{o.height}"
+      window.open.apply window, args
+
+    _tweakInsideHtml: ->
+      return unless @options.html?
+      @$el.html @options.html
+
+    _prepareUrl: ->
+      o = @options
+      shareUrl = o.url or location.href
+      tweetText = o.text or document.title
+      @_url = "https://twitter.com/share?url=#{encodeURIComponent(shareUrl)}&text=#{encodeURIComponent(tweetText)}"
+      if o.tweakHref
+        @$el.attr 'href', @_url
+
+    _handleAttr: (key) ->
+      prop = key.replace /^data-twittershare-/, ''
+      val = @$el.attr key
+      return unless val
+      @options[prop] = val
+
+    _handleDataAttrs: ->
+      @_handleAttr 'data-twittershare-windowname'
+      @_handleAttr 'data-twittershare-width'
+      @_handleAttr 'data-twittershare-height'
+      @_handleAttr 'data-twittershare-text'
+      @_handleAttr 'data-twittershare-url'
+
+    _eventify: ->
+      @$el.click (e) =>
+        e.preventDefault()
+        @open()
+
+  $.fn.twitterShareButton = (options) ->
+    key = 'facebooksharebutton'
+    return @each (i, el) ->
+      $el = $(el)
+      instance = new ns.twitterShareButton.Button $el, options
+      if $el.data key
+        return
+      $el.data key, instance
+
+
+  # ============================================================
   # gplus
   # https://developers.google.com/+/web/+1button/?hl=en
   
