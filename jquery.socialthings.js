@@ -274,7 +274,7 @@
     })();
     $.fn.twitterShareButton = function(options) {
       var key;
-      key = 'facebooksharebutton';
+      key = 'twittersharebutton';
       return this.each(function(i, el) {
         var $el, instance;
         $el = $(el);

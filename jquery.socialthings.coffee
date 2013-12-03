@@ -215,7 +215,7 @@ do ($ = jQuery) ->
         @open()
 
   $.fn.twitterShareButton = (options) ->
-    key = 'facebooksharebutton'
+    key = 'twittersharebutton'
     return @each (i, el) ->
       $el = $(el)
       instance = new ns.twitterShareButton.Button $el, options
