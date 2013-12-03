@@ -182,6 +182,9 @@
         height: null,
         url: null,
         html: null,
+        text: null,
+        via: null,
+        related: null,
         tweakHref: true
       };
 
@@ -213,11 +216,26 @@
       };
 
       Button.prototype._prepareUrl = function() {
-        var o, shareUrl, tweetText;
+        var o, params, related, shareUrl, tweetText, via;
         o = this.options;
         shareUrl = o.url || location.href;
         tweetText = o.text || document.title;
-        this._url = "https://twitter.com/share?url=" + (encodeURIComponent(shareUrl)) + "&text=" + (encodeURIComponent(tweetText));
+        via = o.via;
+        related = o.related;
+        params = [];
+        if (shareUrl) {
+          params.push("url=" + (encodeURIComponent(shareUrl)));
+        }
+        if (tweetText) {
+          params.push("text=" + (encodeURIComponent(tweetText)));
+        }
+        if (via) {
+          params.push("via=" + (encodeURIComponent(via)));
+        }
+        if (related) {
+          params.push("related=" + (encodeURIComponent(related)));
+        }
+        this._url = "https://twitter.com/share?" + params.join("&");
         if (o.tweakHref) {
           return this.$el.attr('href', this._url);
         }
@@ -238,7 +256,9 @@
         this._handleAttr('data-twittershare-width');
         this._handleAttr('data-twittershare-height');
         this._handleAttr('data-twittershare-text');
-        return this._handleAttr('data-twittershare-url');
+        this._handleAttr('data-twittershare-url');
+        this._handleAttr('data-twittershare-via');
+        return this._handleAttr('data-twittershare-related');
       };
 
       Button.prototype._eventify = function() {

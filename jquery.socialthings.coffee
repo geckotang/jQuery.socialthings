@@ -155,6 +155,9 @@ do ($ = jQuery) ->
       height: null
       url: null
       html: null
+      text: null
+      via: null
+      related: null
       tweakHref: true
 
     constructor: (@$el, options) ->
@@ -180,7 +183,14 @@ do ($ = jQuery) ->
       o = @options
       shareUrl = o.url or location.href
       tweetText = o.text or document.title
-      @_url = "https://twitter.com/share?url=#{encodeURIComponent(shareUrl)}&text=#{encodeURIComponent(tweetText)}"
+      via = o.via
+      related = o.related
+      params = []
+      params.push "url=#{encodeURIComponent(shareUrl)}" if shareUrl
+      params.push "text=#{encodeURIComponent(tweetText)}" if tweetText
+      params.push "via=#{encodeURIComponent(via)}" if via
+      params.push "related=#{encodeURIComponent(related)}" if related
+      @_url = "https://twitter.com/share?" + params.join "&"
       if o.tweakHref
         @$el.attr 'href', @_url
 
@@ -196,6 +206,8 @@ do ($ = jQuery) ->
       @_handleAttr 'data-twittershare-height'
       @_handleAttr 'data-twittershare-text'
       @_handleAttr 'data-twittershare-url'
+      @_handleAttr 'data-twittershare-via'
+      @_handleAttr 'data-twittershare-related'
 
     _eventify: ->
       @$el.click (e) =>
